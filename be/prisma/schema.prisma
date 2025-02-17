@@ -32,8 +32,8 @@ model Message {
   text       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  sender     User     @relation("sender", fields: [senderId], references: [id])
-  receiver   User     @relation("receiver", fields: [receiverId], references: [id])
+  sender     User     @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
@@ -42,5 +42,5 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

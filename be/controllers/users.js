@@ -1,9 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { sendEmail } from "./nodemailer.js";
-
-const prisma = new PrismaClient({
-	log: ["query"],
-});
+import prisma from "../prisma/db.config.js";
+import { sendEmail } from "../nodemailer.js";
 
 export const registerUser = async (req, res) => {
 	const { name, email, password } = req.body;
@@ -25,6 +21,12 @@ export const registerUser = async (req, res) => {
 				password,
 			},
 		});
+
+		sendEmail(
+			email,
+			"Successful Registration",
+			`Hi ${name}, Welcome to our platform homesolution, we are glad to have you here!, You account  is created successfully with id ${user.id}`,
+		);
 		res.json(user);
 	} catch (error) {
 		console.log(error);
@@ -82,7 +84,32 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
 	const { id } = req.params;
 	const { name, email, password } = req.body;
+
+	if (!name && !email && !password) {
+		return res
+			.status(400)
+			.json({ message: "At least one field is required" });
+	}
+
 	try {
+		const existingEmail = await prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
+		if (existingEmail) {
+			return res.status(400).json({ message: "Email already exists" });
+		}
+
+		const existingUser = await prisma.user.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		});
+		if (!existingUser) {
+			return res.status(400).json({ message: "User does not exist" });
+		}
+
 		const user = await prisma.user.update({
 			where: {
 				id: parseInt(id),
@@ -102,7 +129,17 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
 	const { id } = req.params;
+
 	try {
+		const existingUser = await prisma.user.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		});
+		if (!existingUser) {
+			return res.status(400).json({ message: "User does not exist" });
+		}
+
 		await prisma.user.delete({
 			where: {
 				id: parseInt(id),

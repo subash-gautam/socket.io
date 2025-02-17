@@ -1,13 +1,15 @@
 ### Check server
 GET http://localhost:3500/api
 
+
+##################### USER ROUTES ####################################
 ### Register
 POST http://localhost:3500/api/register#admin for admin, register for user
 Content-Type: application/json
 
 {
-    "name": "Subash Gautam",
-    "email": "subashgautam@gmail.com",
+    "name": "Grish Joshi",
+    "email": "grish9869404451@gmail.com",
     "password": "password"
 }
 
@@ -22,3 +24,46 @@ Content-Type: application/json
 
 ### Get all Users
 GET http://localhost:3500/api/users
+
+### Get User by ID
+GET http://localhost:3500/api/user/3
+
+### Update User
+PUT http://localhost:3500/api/user/1
+Content-Type: application/json
+
+{
+    "name": "Subash Gautam",
+    "email": "subashgautam1@gmail.com",
+    "password": "password"
+}
+
+### Delete User
+DELETE http://localhost:3500/api/user/1
+
+
+
+##################### MESSAGE ROUTES ####################################
+### Message
+POST http://localhost:3500/api/message
+Content-Type: application/json
+
+{
+    "senderId": 4,
+    "receiverId": 5,
+    "text": "Whats up .."
+}
+
+### Get a message
+GET http://localhost:3500/api/message/1
+
+### Get a chat
+GET http://localhost:3500/api/chat
+Content-Type: application/json
+
+{
+    "senderId": 4,
+    "receiverId": 5
+}
+
+##################### NOTIFICATION ROUTES ####################################
