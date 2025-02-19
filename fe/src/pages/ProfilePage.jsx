@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import backend from "../config/backend.js";
 
-function ProfilePage({ token }) {
-	// Receive token as a prop
+function ProfilePage() {
+	const token = localStorage.getItem("token");
 	const [userData, setUserData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);

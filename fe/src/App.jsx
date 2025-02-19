@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 import { SocketProvider } from "./context/socketContext.jsx";
+
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -10,8 +11,8 @@ import ProfilePage from "./pages/ProfilePage";
 import Navbar from "./components/Navbar";
 
 function App() {
-	const [token, setToken] = useState(null); // Initialize token to null
-	const navigate = useNavigate(); // Hook for navigation
+	const [token, setToken] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const storedToken = localStorage.getItem("token");
@@ -27,22 +28,14 @@ function App() {
 			<SocketProvider>
 				<Navbar token={token} />
 				<Routes>
-					<Route path="/" element={<Home token={token} />} />
+					<Route path="/" element={<Home />} />
 					<Route
 						path="/login"
-						element={
-							<LoginPage token={token} setToken={setToken} />
-						}
+						element={<LoginPage setToken={setToken} />}
 					/>
-					<Route
-						path="/register"
-						element={<RegisterPage token={token} />}
-					/>
-					<Route path="/chat" element={<ChatPage token={token} />} />
-					<Route
-						path="/profile"
-						element={<ProfilePage token={token} />}
-					/>
+					<Route path="/register" element={<RegisterPage />} />
+					<Route path="/chat" element={<ChatPage />} />
+					<Route path="/profile" element={<ProfilePage />} />
 				</Routes>
 			</SocketProvider>
 		</>

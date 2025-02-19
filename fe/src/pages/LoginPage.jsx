@@ -1,6 +1,7 @@
 import Login from "../components/Auth/Login";
 
-function LoginPage({ token }) {
+function LoginPage() {
+	const token = localStorage.getItem("token");
 	if (!token) {
 		return (
 			<div

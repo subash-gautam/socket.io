@@ -44,6 +44,12 @@ export default function socketHandler(io) {
 		console.log("onlineUsers:", onlineUsers);
 		io.emit("user_status", onlineUsers);
 
+		socket.on("test1", (data) => {
+			console.log("test data : ", data);
+		});
+
+		socket.emit("test2", "Testing");
+
 		socket.on("private_message", (message) => {
 			io.to(message.receiverId).emit("private_message", message);
 		});
