@@ -1,2 +1,2 @@
-import prisma from "../prisma/db.config";
-import { sendEmail } from "../nodemailer";
+import prisma from "../prisma/db.config.js";
+import { sendEmail } from "../middlewares/nodemailer.js";

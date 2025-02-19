@@ -9,7 +9,7 @@ Content-Type: application/json
 
 {
     "name": "Grish Joshi",
-    "email": "grish9869404451@gmail.com",
+    "email": "suwi@gmail.com",
     "password": "password"
 }
 
@@ -18,7 +18,7 @@ POST http://localhost:3500/api/login
 Content-Type: application/json
 
 {
-    "email": "subashgautam977@gmail.com",
+    "email": "subashgautam@gmail.com",
     "password": "password"
 }
 
@@ -27,6 +27,10 @@ GET http://localhost:3500/api/users
 
 ### Get User by ID
 GET http://localhost:3500/api/user/3
+
+### Get user details authenticated
+GET http://localhost:3500/api/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6IkFETUlOIiwiaWF0IjoxNzM5ODcxOTExLCJleHAiOjE3NDI0NjM5MTF9.lGbRd-pJVEuHYmAN3D6c3ZETO0e7-EKHJir7MgeFxTs
 
 ### Update User
 PUT http://localhost:3500/api/user/1
@@ -46,24 +50,24 @@ DELETE http://localhost:3500/api/user/1
 ##################### MESSAGE ROUTES ####################################
 ### Message
 POST http://localhost:3500/api/message
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IlVTRVIiLCJpYXQiOjE3Mzk5NDIyODksImV4cCI6MTc0MjUzNDI4OX0.TFeuJJVyetFdsTWjzFJJeJtQ0kyoeBXHU7FcoVlHx_o
 Content-Type: application/json
 
 {
-    "senderId": 4,
-    "receiverId": 5,
-    "text": "Whats up .."
+    "receiverId": 4,
+    "text": "Whats up dude .."
 }
 
 ### Get a message
 GET http://localhost:3500/api/message/1
 
-### Get a chat
-GET http://localhost:3500/api/chat
-Content-Type: application/json
+### Chat List fetchs ids of other users with whom hte user has had chat with
+GET http://localhost:3500/api/chatList
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Mzk4NzU4NDMsImV4cCI6MTc0MjQ2Nzg0M30.e2ipI26N42XoI18yKfx-nlahVQVZBX_WiXvhtRxfheA
 
-{
-    "senderId": 4,
-    "receiverId": 5
-}
+### Get a chat
+GET http://localhost:3500/api/chat?receiverId=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Mzk4NzU4NDMsImV4cCI6MTc0MjQ2Nzg0M30.e2ipI26N42XoI18yKfx-nlahVQVZBX_WiXvhtRxfheA
+
 
 ##################### NOTIFICATION ROUTES ####################################

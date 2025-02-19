@@ -1,5 +1,6 @@
 import prisma from "../prisma/db.config.js";
-import { sendEmail } from "../nodemailer.js";
+import { sendEmail } from "../middlewares/nodemailer.js";
+import { generateToken } from "../middlewares/auth.js";
 
 export const registerUser = async (req, res) => {
 	const { name, email, password } = req.body;
@@ -49,7 +50,9 @@ export const loginUser = async (req, res) => {
 			return res.status(400).json({ message: "Invalid credentials" });
 		}
 
-		res.json(user);
+		const token = generateToken(user.id, user.role);
+
+		res.json({ message: "Login Success !!", user, token });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: error.message });
@@ -60,6 +63,21 @@ export const getUsers = async (req, res) => {
 	try {
 		const users = await prisma.user.findMany();
 		res.json(users);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: error.message });
+	}
+};
+
+export const getAUser = async (req, res) => {
+	const { id } = req.user;
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: parseInt(id),
+			},
+		});
+		res.json(user);
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: error.message });

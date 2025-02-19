@@ -1,8 +1,9 @@
 import prisma from "../prisma/db.config.js";
-import { sendEmail } from "../nodemailer.js";
+import { sendEmail } from "../middlewares/nodemailer.js";
 
 export const createMessage = async (req, res) => {
-	const { senderId, receiverId, text } = req.body;
+	const senderId = req.user.id;
+	const { receiverId, text } = req.body;
 
 	try {
 		const message = await prisma.message.create({
@@ -34,30 +35,82 @@ export const getMessage = async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 };
+
+export const chatIdList = async (req, res) => {
+	const { id } = req.user;
+	try {
+		const messages = await prisma.message.findMany({
+			where: {
+				OR: [{ receiverId: id }, { senderId: id }],
+			},
+			select: {
+				receiverId: true,
+				senderId: true,
+			},
+		});
+
+		const userIds = new Set();
+
+		messages.forEach((message) => {
+			userIds.add(message.receiverId);
+			userIds.add(message.senderId);
+		});
+
+		const uniqueUserIds = Array.from(userIds);
+
+		// Correct way to filter out the current user's ID
+		const relationIds = uniqueUserIds.filter((userId) => userId !== id);
+
+		res.json({ userIds: relationIds });
+	} catch (error) {
+		console.error(error); // Use console.error for errors
+		res.status(500).json({ message: error.message });
+	}
+};
+
 export const getChat = async (req, res) => {
-	const { senderId, receiverId } = req.body;
+	const senderId = req.user.id;
+	const { receiverId } = req.query;
+
+	console.log("senderId:", typeof senderId, senderId);
+	console.log("receiverId:", typeof receiverId, receiverId);
+	console.log("req.query:", req.query);
+	console.log("req.user:", req.user);
+
+	const parsedSenderId = parseInt(senderId);
+	const parsedReceiverId = parseInt(receiverId);
+
+	if (isNaN(parsedSenderId) || isNaN(parsedReceiverId)) {
+		return res.status(400).json({
+			message: "Invalid senderId or receiverId. Must be integers.",
+		});
+	}
+
 	try {
 		const messages = await prisma.message.findMany({
 			where: {
 				OR: [
 					{
 						AND: [
-							{ senderId: senderId },
-							{ receiverId: receiverId },
+							{ senderId: parsedSenderId },
+							{ receiverId: parsedReceiverId },
 						],
 					},
 					{
 						AND: [
-							{ senderId: receiverId },
-							{ receiverId: senderId },
+							{ senderId: parsedReceiverId },
+							{ receiverId: parsedSenderId },
 						],
 					},
 				],
 			},
+			orderBy: {
+				createdAt: "asc",
+			},
 		});
 		res.json(messages);
 	} catch (error) {
-		console.log(error);
+		console.error("Error in getChat:", error); // Use console.error for errors
 		res.status(500).json({ message: error.message });
 	}
 };

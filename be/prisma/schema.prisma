@@ -20,6 +20,7 @@ model User {
   password         String
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  active           Boolean        @default(false)
   messagesSent     Message[]      @relation("sender")
   messagesReceived Message[]      @relation("receiver")
   notifications    Notification[]
@@ -41,6 +42,7 @@ model Notification {
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  read      Boolean  @default(false)
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
