@@ -11,15 +11,18 @@ function ProfilePage() {
 	const { socket } = useSocket();
 
 	useEffect(() => {
-		// console.log(socket);
 		if (!socket) return;
-		const handleData = (data) => {
-			console.log(data);
+
+		socket.emit("test1", "Testing 1 from client, profile page loaded");
+
+		const handleUserFetching = (message) => {
+			console.log("Received from server:", message);
 		};
-		if (socket) {
-			socket.emit("test1", "Testing 1 from client, profile page loaded");
-			socket.on("user_fetching", handleData);
-		}
+
+		socket.on("user_fetching", handleUserFetching);
+
+		// Cleanup function to prevent duplicate listeners
+
 		const fetchUserData = async () => {
 			try {
 				const response = await fetch(`${backend}/api/user`, {
@@ -54,6 +57,10 @@ function ProfilePage() {
 			setLoading(false); // If no token, not loading
 			setError("No token available. Please log in."); // Set error message
 		}
+
+		return () => {
+			socket.off("user_fetching", handleUserFetching);
+		};
 	}, [socket, token]);
 
 	if (loading) {

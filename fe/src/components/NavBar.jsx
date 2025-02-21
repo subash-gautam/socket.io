@@ -7,7 +7,7 @@ function Navbar() {
 
 	const { socket } = useSocket();
 
-	// console.log("The socket: ", socket);
+	console.log("The socket: ", socket);
 
 	useEffect(() => {
 		if (!socket) return;

@@ -20,6 +20,7 @@ app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: corsOptions });
+app.set("io", io);
 
 // socketHandler(io);
 io.use(socketHandler(io));

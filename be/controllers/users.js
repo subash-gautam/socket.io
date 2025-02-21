@@ -87,6 +87,7 @@ export const getAUser = async (req, res) => {
 				id: parseInt(id),
 			},
 		});
+		// console.log(req.app.get("io"));
 		if (req.app.get("io")) {
 			console.log("Before sending : ", user.id, user.name, user.email);
 			const io = req.app.get("io");
