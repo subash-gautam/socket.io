@@ -3,13 +3,14 @@ import { verifyTokenPromise } from "../middlewares/auth.js";
 export default function socketHandler(io) {
 	io.use(async (socket, next) => {
 		try {
-			const token = socket.handshake.query.token;
+			// console.log("Socket auth: ", socket.handshake.auth);
+			const token = socket.handshake.auth.token;
 			const decoded = await verifyTokenPromise(
 				token,
 				process.env.JWT_SECRET,
 			);
 			socket.user = decoded;
-			console.log("Decoded user:", socket.user);
+			console.log("Decoded user via socket:", socket.user);
 			if (!socket.user || !socket.user.id) {
 				return next(new Error("Invalid user data"));
 			}
@@ -23,7 +24,7 @@ export default function socketHandler(io) {
 	io.on("connection", (socket) => {
 		console.log(
 			"A user connected with token:",
-			socket.handshake.query.token,
+			socket.handshake.auth.token,
 		);
 
 		if (!socket.user || !socket.user.id) {
@@ -48,7 +49,7 @@ export default function socketHandler(io) {
 			console.log("test data : ", data);
 		});
 
-		socket.emit("test2", "Testing");
+		socket.emit("test2", "Testing 2 from server");
 
 		socket.on("private_message", (message) => {
 			io.to(message.receiverId).emit("private_message", message);

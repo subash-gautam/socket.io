@@ -4,11 +4,11 @@ import { useSocket } from "../context/socketContext";
 function Home() {
 	const token = localStorage.getItem("token");
 	const { socket } = useSocket();
-
 	useEffect(() => {
-		if (!socket) return; // Ensure socket exists before using it
+		if (!socket) return;
 
-		socket.emit("test1", "Testing");
+		socket.emit("test1", "Testing 1 from client, home page loaded");
+		// console.log("Socket in home: ", socket);
 
 		const handleTest2 = (data) => console.log(data);
 		socket.on("test2", handleTest2);

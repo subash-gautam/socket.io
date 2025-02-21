@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import backend from "../config/backend.js";
+import { useSocket } from "../context/socketContext.jsx";
 
 function ProfilePage() {
 	const token = localStorage.getItem("token");
@@ -7,7 +8,18 @@ function ProfilePage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	const { socket } = useSocket();
+
 	useEffect(() => {
+		// console.log(socket);
+		if (!socket) return;
+		const handleData = (data) => {
+			console.log(data);
+		};
+		if (socket) {
+			socket.emit("test1", "Testing 1 from client, profile page loaded");
+			socket.on("user_fetching", handleData);
+		}
 		const fetchUserData = async () => {
 			try {
 				const response = await fetch(`${backend}/api/user`, {
@@ -17,7 +29,6 @@ function ProfilePage() {
 						"Content-Type": "application/json",
 					},
 				});
-				console.log(response);
 
 				if (!response.ok) {
 					const errorData = await response.json(); // Try to get error details from backend
@@ -43,7 +54,7 @@ function ProfilePage() {
 			setLoading(false); // If no token, not loading
 			setError("No token available. Please log in."); // Set error message
 		}
-	}, [token]); // Add token to the dependency array
+	}, [socket, token]);
 
 	if (loading) {
 		return (

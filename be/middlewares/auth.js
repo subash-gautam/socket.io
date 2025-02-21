@@ -1,12 +1,14 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const generateToken = (id, role) => {
 	return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-export const verifyTokenPromise = (token, secret) => {
+export const verifyTokenPromise = (token) => {
 	return new Promise((resolve, reject) => {
-		jwt.verify(token, secret, (err, decoded) => {
+		jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 			if (err) {
 				return reject(err);
 			}
@@ -36,6 +38,7 @@ export const authenticateToken = async (req, res, next) => {
 export const authenticateSocket = async (socket, next) => {
 	try {
 		const token = socket.handshake.query.token; // Extract token from handshake query
+		console.log("Token in socket auth: ", token);
 		if (!token) {
 			throw new Error("No token provided");
 		}

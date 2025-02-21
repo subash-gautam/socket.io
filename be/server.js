@@ -21,7 +21,8 @@ app.use(cors(corsOptions));
 const server = http.createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
-socketHandler(io);
+// socketHandler(io);
+io.use(socketHandler(io));
 
 app.use("/api", Routes);
 

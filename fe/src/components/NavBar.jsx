@@ -1,8 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSocket } from "../context/socketContext";
 
-function Navbar({ token }) {
-	useEffect(() => {}, [token]);
+function Navbar() {
+	const token = localStorage.getItem("token");
+
+	const { socket } = useSocket();
+
+	// console.log("The socket: ", socket);
+
+	useEffect(() => {
+		if (!socket) return;
+		socket.on("new_user", (data) => console.log("User data: ", data));
+	}, [socket]);
+
 	return (
 		<nav
 			style={{

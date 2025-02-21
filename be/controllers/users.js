@@ -29,6 +29,16 @@ export const registerUser = async (req, res) => {
 			`Hi ${name}, Welcome to our platform homesolution, we are glad to have you here!, You account  is created successfully with id ${user.id}`,
 		);
 		res.json(user);
+
+		if (req.app.get("io")) {
+			console.log("Emitting from be..");
+			const io = req.app.get("io");
+			io.emit("new_user", {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+			});
+		}
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: error.message });
@@ -77,6 +87,15 @@ export const getAUser = async (req, res) => {
 				id: parseInt(id),
 			},
 		});
+		if (req.app.get("io")) {
+			console.log("Before sending : ", user.id, user.name, user.email);
+			const io = req.app.get("io");
+			io.emit("user_fetching", {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+			});
+		}
 		res.json(user);
 	} catch (error) {
 		console.log(error);
