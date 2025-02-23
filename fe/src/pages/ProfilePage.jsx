@@ -16,7 +16,7 @@ function ProfilePage() {
 		socket.emit("test1", "Testing 1 from client, profile page loaded");
 
 		const handleUserFetching = (message) => {
-			console.log("Received from server:", message);
+			console.log("Data fetched for a user :", message);
 		};
 
 		socket.on("user_fetching", handleUserFetching);

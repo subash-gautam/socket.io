@@ -1,6 +1,7 @@
 import prisma from "../prisma/db.config.js";
 import { sendEmail } from "../middlewares/nodemailer.js";
 import { generateToken } from "../middlewares/auth.js";
+import { getOnlineUsers } from "../middlewares/socketStates.js";
 
 export const registerUser = async (req, res) => {
 	const { name, email, password } = req.body;
@@ -30,13 +31,15 @@ export const registerUser = async (req, res) => {
 		);
 		res.json(user);
 
+		// notifiy the admin
+		const onlineUsers = getOnlineUsers();
+		const adminSocket = onlineUsers.findIndex(
+			(user) => user.userId === 3,
+		).socketId;
 		if (req.app.get("io")) {
-			console.log("Emitting from be..");
 			const io = req.app.get("io");
-			io.emit("new_user", {
-				id: user.id,
-				name: user.name,
-				email: user.email,
+			io.to(adminSocket).emit("new_user", {
+				message: `New user with ID : ${user.id} created.`,
 			});
 		}
 	} catch (error) {
@@ -91,10 +94,8 @@ export const getAUser = async (req, res) => {
 		if (req.app.get("io")) {
 			console.log("Before sending : ", user.id, user.name, user.email);
 			const io = req.app.get("io");
-			io.emit("user_fetching", {
-				id: user.id,
+			io.to().emit("user_fetching", {
 				name: user.name,
-				email: user.email,
 			});
 		}
 		res.json(user);
@@ -183,6 +184,15 @@ export const deleteUser = async (req, res) => {
 				id: parseInt(id),
 			},
 		});
+
+		const onlineUsers = getOnlineUsers();
+		const adminSocket = onlineUsers.findIndex(
+			(user) => user.userId === 3,
+		).socketId;
+		if (req.app.get("io")) {
+			const io = req.app.get("io");
+			io.to(adminSocket).emit("user_deleted", existingUser);
+		}
 		res.json({ message: "User deleted successfully" });
 	} catch (error) {
 		console.log(error);
@@ -193,12 +203,12 @@ export const deleteUser = async (req, res) => {
 export const createAdmin = async (req, res) => {
 	const { name, email, password } = req.body;
 	try {
-		const existingAdmin = await prisma.user.findMany({
+		const existingAdmin = await prisma.user.findFirst({
 			where: {
 				role: "ADMIN",
 			},
 		});
-		if (existingAdmin.length) {
+		if (existingAdmin) {
 			return res
 				.status(400)
 				.json({ message: "This system already has a admin" });

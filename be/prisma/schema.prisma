@@ -12,6 +12,18 @@ enum role {
   USER
 }
 
+enum notificationType {
+  all
+  message
+  alert
+}
+
+enum notificationStatus {
+  read
+  unread
+  archived
+}
+
 model User {
   id               Int            @id @default(autoincrement())
   role             role           @default(USER)
@@ -38,11 +50,12 @@ model Message {
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  text      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  read      Boolean  @default(false)
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      Int                @id @default(autoincrement())
+  title   String
+  content String?
+  date    DateTime           @default(now())
+  type    notificationType?
+  status  notificationStatus @default(unread)
+  userId  Int?
+  user    User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

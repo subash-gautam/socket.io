@@ -1,4 +1,5 @@
 import { verifyTokenPromise } from "../middlewares/auth.js";
+import { setOnlineUsers } from "./socketStates.js";
 
 export default function socketHandler(io) {
 	io.use(async (socket, next) => {
@@ -42,6 +43,15 @@ export default function socketHandler(io) {
 			}),
 		);
 
+		// io.emit("new_notification", {
+		// 	userId: socket.user.id,
+		// });
+
+		// saving online users
+		setOnlineUsers(onlineUsers);
+
+		io.to(socket.user.id).emit("user_status", onlineUsers);
+
 		console.log("onlineUsers:", onlineUsers);
 		io.emit("user_status", onlineUsers);
 
@@ -68,8 +78,7 @@ export default function socketHandler(io) {
 					socketId: s.id,
 				}),
 			);
-
-			console.log("onlineUsers : ", onlineUsers);
+			setOnlineUsers(onlineUsers);
 
 			io.emit("user_status", onlineUsers);
 		});
