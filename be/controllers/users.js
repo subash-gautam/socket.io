@@ -50,8 +50,10 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
 	const { email, password } = req.body;
+	const io = req.app.get("socket");
+	io.emit("try", { message: "trying to login" });
 	try {
-		const user = await prisma.user.findUnique({
+		const user = await prisma.user.findFirst({
 			where: {
 				email: email,
 			},

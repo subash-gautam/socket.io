@@ -24,21 +24,19 @@ function App() {
 	}, []);
 
 	return (
-		<>
-			<SocketProvider>
-				<Navbar token={token} />
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route
-						path="/login"
-						element={<LoginPage setToken={setToken} />}
-					/>
-					<Route path="/register" element={<RegisterPage />} />
-					<Route path="/chat" element={<ChatPage />} />
-					<Route path="/profile" element={<ProfilePage />} />
-				</Routes>
-			</SocketProvider>
-		</>
+		<SocketProvider>
+			<Navbar token={token} />
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route
+					path="/login"
+					element={<LoginPage setToken={setToken} />}
+				/>
+				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/chat" element={<ChatPage />} />
+				<Route path="/profile" element={<ProfilePage />} />
+			</Routes>
+		</SocketProvider>
 	);
 }
 

@@ -1,9 +1,14 @@
 import prisma from "../prisma/db.config.js";
 import { sendEmail } from "../middlewares/nodemailer.js";
+import { getOnlineUsers } from "../middlewares/socketStates.js";
 
 export const createMessage = async (req, res) => {
+	const io = req.app.get("socket");
 	const senderId = req.user.id;
 	const { receiverId, text } = req.body;
+
+	if (receiverId == senderId)
+		return res.status(400).json({ error: "Cannot send message to self" });
 
 	try {
 		const message = await prisma.message.create({
@@ -13,7 +18,11 @@ export const createMessage = async (req, res) => {
 				text,
 			},
 		});
+		const socketId = getOnlineUsers().find(
+			(user) => user.userId === receiverId,
+		).socketId;
 
+		io.to(socketId).emit("new_message", message);
 		res.json(message);
 	} catch (error) {
 		console.log(error);

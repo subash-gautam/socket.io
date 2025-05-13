@@ -18,7 +18,7 @@ POST http://localhost:3500/api/login
 Content-Type: application/json
 
 {
-    "email": "subashgautam@gmail.com",
+    "email": "subashgautam977@gmail.com",
     "password": "password"
 }
 
@@ -50,12 +50,12 @@ DELETE http://localhost:3500/api/user/1
 ##################### MESSAGE ROUTES ####################################
 ### Message
 POST http://localhost:3500/api/message
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IlVTRVIiLCJpYXQiOjE3Mzk5NDIyODksImV4cCI6MTc0MjUzNDI4OX0.TFeuJJVyetFdsTWjzFJJeJtQ0kyoeBXHU7FcoVlHx_o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6IkFETUlOIiwiaWF0IjoxNzQ3MTA4Nzg3LCJleHAiOjE3NDk3MDA3ODd9.dwkidBZM42B7TlpiXkkEqiEEZ-ky2J4i81Mz-kNvWfs
 Content-Type: application/json
 
 {
     "receiverId": 4,
-    "text": "Whats up dude .."
+    "text": "Sorry, hello from admin.."
 }
 
 ### Get a message

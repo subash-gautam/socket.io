@@ -1,6 +1,7 @@
 import backend from "../config/backend";
 import { useEffect, useState } from "react";
 import ChatWindow from "../components/Chat/ChatWindow";
+// import SearchIcon from "@mui/icons-material/Search";
 
 function ChatPage() {
 	const [users, setUsers] = useState([]);
@@ -21,6 +22,8 @@ function ChatPage() {
 				});
 
 				if (!initialResponse.ok) {
+					localStorage.removeItem("token");
+					window.location.href = "/";
 					const errorData = await initialResponse.json();
 					throw new Error(
 						errorData.message ||
@@ -46,6 +49,7 @@ function ChatPage() {
 					);
 
 					if (!userResponse.ok) {
+						localStorage.removeItem("token");
 						const errorData = await userResponse.json();
 						throw new Error(
 							errorData.message ||
@@ -70,7 +74,7 @@ function ChatPage() {
 			fetchUsers();
 		} else {
 			setLoading(false);
-			setError("No token available. Please log in.");
+			setError("No token si available. Please log in.");
 		}
 	}, [token]);
 
@@ -95,6 +99,7 @@ function ChatPage() {
 					overflowY: "auto",
 				}}>
 				<h2 style={{ padding: "10px" }}>Users</h2>
+				{/* <SearchIcon /> */}
 				{users.map((user) => (
 					<div
 						key={user.id}
@@ -107,6 +112,7 @@ function ChatPage() {
 									: "transparent",
 						}}
 						onClick={() => handleUserClick(user)}>
+						{user.id} {" : "}
 						{user.name}
 					</div>
 				))}

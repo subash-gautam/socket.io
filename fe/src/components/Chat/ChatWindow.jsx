@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import backend from "../../config/backend.js";
 import Message from "./Message";
+import { useSocket } from "../../context/socketContext.jsx";
 
 function ChatWindow({ receiverId }) {
+	const { socket } = useSocket(); // ✅ Correct use of hook
+
 	const [messages, setMessages] = useState([]);
 	const [newMessage, setNewMessage] = useState("");
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
+	// Fetch chat history
 	useEffect(() => {
 		const token = localStorage.getItem("token");
 		setLoading(true);
 		setError(null);
 		setMessages([]);
+
 		fetch(`${backend}/api/chat?receiverId=${receiverId}`, {
 			method: "GET",
 			headers: {
@@ -22,7 +27,6 @@ function ChatWindow({ receiverId }) {
 			.then((response) => {
 				if (!response.ok) {
 					return response.json().then((err) => {
-						console.log(err);
 						throw new Error(
 							err.message ||
 								`HTTP error! status: ${response.status}`,
@@ -34,10 +38,26 @@ function ChatWindow({ receiverId }) {
 			.then((data) => setMessages(data))
 			.catch((error) => {
 				console.error("Error fetching messages:", error);
-				setError(error.message); // Do NOT clear messages here
+				setError(error.message);
 			})
 			.finally(() => setLoading(false));
 	}, [receiverId]);
+
+	// Listen for new messages from socket
+	useEffect(() => {
+		if (!socket) return;
+
+		const handleNewMessage = (message) => {
+			setMessages((prev) => [...prev, message]);
+		};
+
+		socket.on("new_message", handleNewMessage);
+
+		// ✅ Cleanup listener on unmount or socket change
+		return () => {
+			socket.off("new_message", handleNewMessage);
+		};
+	}, [socket]);
 
 	const sendMessage = () => {
 		const token = localStorage.getItem("token");
@@ -63,7 +83,7 @@ function ChatWindow({ receiverId }) {
 				return response.json();
 			})
 			.then((data) => {
-				setMessages([...messages, data]);
+				setMessages((prev) => [...prev, data]);
 				setNewMessage("");
 				setError(null);
 			})
@@ -86,7 +106,6 @@ function ChatWindow({ receiverId }) {
 			<div style={{ flex: 1, overflowY: "scroll", padding: "5px" }}>
 				{loading && <p>Loading messages...</p>}
 				{error && <p style={{ color: "red" }}>{error}</p>}
-				{/* Improved conditional rendering */}
 				{messages.length === 0 && !error && !loading && (
 					<p>No messages yet</p>
 				)}

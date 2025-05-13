@@ -25,6 +25,7 @@ function ProfilePage() {
 
 		const fetchUserData = async () => {
 			try {
+				console.log("before fetching....");
 				const response = await fetch(`${backend}/api/user`, {
 					method: "GET",
 					headers: {
@@ -34,6 +35,7 @@ function ProfilePage() {
 				});
 
 				if (!response.ok) {
+					localStorage.removeItem("token");
 					const errorData = await response.json(); // Try to get error details from backend
 					throw new Error(
 						errorData.message || "Failed to fetch profile data",
