@@ -1,10 +1,10 @@
 ### Check server
-GET http://localhost:3500/api
+GET https://socket-io-1k1n.onrender.com/api
 
 
 ##################### USER ROUTES ####################################
 ### Register
-POST http://localhost:3500/api/register#admin for admin, register for user
+POST https://socket-io-1k1n.onrender.com/api/register#admin for admin, register for user
 Content-Type: application/json
 
 {

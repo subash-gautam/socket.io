@@ -20,7 +20,7 @@ export const createMessage = async (req, res) => {
 		});
 		const socketId = getOnlineUsers().find(
 			(user) => user.userId === receiverId,
-		).socketId;
+		)?.socketId;
 
 		io.to(socketId).emit("new_message", message);
 		res.json(message);
@@ -48,29 +48,35 @@ export const getMessage = async (req, res) => {
 export const chatIdList = async (req, res) => {
 	const { id } = req.user;
 	try {
-		const messages = await prisma.message.findMany({
+		// const messages = await prisma.message.findMany({
+		// 	where: {
+		// 		OR: [{ receiverId: id }, { senderId: id }],
+		// 	},
+		// 	select: {
+		// 		receiverId: true,
+		// 		senderId: true,
+		// 	},
+		// });
+		// const userIds = new Set();
+		// messages.forEach((message) => {
+		// 	userIds.add(message.receiverId);
+		// 	userIds.add(message.senderId);
+		// });
+		// const uniqueUserIds = Array.from(userIds);
+		// // Correct way to filter out the current user's ID
+		// const relationIds = uniqueUserIds.filter((userId) => userId !== id);
+		// res.json({ userIds: relationIds });
+		const ids = await prisma.user.findMany({
 			where: {
-				OR: [{ receiverId: id }, { senderId: id }],
+				id: {
+					not: Number(id),
+				},
 			},
 			select: {
-				receiverId: true,
-				senderId: true,
+				id: true,
 			},
 		});
-
-		const userIds = new Set();
-
-		messages.forEach((message) => {
-			userIds.add(message.receiverId);
-			userIds.add(message.senderId);
-		});
-
-		const uniqueUserIds = Array.from(userIds);
-
-		// Correct way to filter out the current user's ID
-		const relationIds = uniqueUserIds.filter((userId) => userId !== id);
-
-		res.json({ userIds: relationIds });
+		res.json({ userIds: ids.map((u) => u.id) });
 	} catch (error) {
 		console.error(error); // Use console.error for errors
 		res.status(500).json({ message: error.message });
