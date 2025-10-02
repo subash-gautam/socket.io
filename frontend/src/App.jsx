@@ -8,7 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChatPage from "./pages/ChatPage";
 import ProfilePage from "./pages/ProfilePage";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 
 function App() {
 	const [token, setToken] = useState(null);

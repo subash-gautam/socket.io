@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSocket } from "../context/socketContext";
-
+//File name adjusted...
 function Navbar() {
 	const token = localStorage.getItem("token");
 	const { socket } = useSocket();
