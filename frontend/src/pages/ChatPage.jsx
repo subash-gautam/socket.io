@@ -27,16 +27,19 @@ function ChatPage() {
 					const errorData = await initialResponse.json();
 					throw new Error(
 						errorData.message ||
-							"Failed to fetch initial user list",
+						"Failed to fetch initial user list",
 					);
 				}
 
 				const initialData = await initialResponse.json();
+				console.log("User Ids initial : ", initialData);
 				const userIds = initialData.userIds;
+				console.log("User Ids : ", userIds);
 
 				const usersData = [];
 
 				for (const userId of userIds) {
+					console.log("Related user Id : ", userId);
 					const userResponse = await fetch(
 						`${backend}/api/user/${userId}`,
 						{
@@ -53,7 +56,7 @@ function ChatPage() {
 						const errorData = await userResponse.json();
 						throw new Error(
 							errorData.message ||
-								`Failed to fetch user details for ID ${userId}`,
+							`Failed to fetch user details for ID ${userId}`,
 						);
 					}
 

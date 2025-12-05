@@ -11,7 +11,7 @@ export default function socketHandler(io) {
 				process.env.JWT_SECRET,
 			);
 			socket.user = decoded;
-			console.log("Decoded user via socket:", socket.user);
+			// console.log("Decoded user via socket:", socket.user);
 			if (!socket.user || !socket.user.id) {
 				return next(new Error("Invalid user data"));
 			}
@@ -23,10 +23,10 @@ export default function socketHandler(io) {
 	});
 
 	io.on("connection", (socket) => {
-		console.log(
-			"A user connected with token:",
-			socket.handshake.auth.token,
-		);
+		// console.log(
+		// 	"A user connected with token:",
+		// 	socket.handshake.auth.token,
+		// );
 
 		if (!socket.user || !socket.user.id) {
 			console.error("User data missing after authentication middleware");

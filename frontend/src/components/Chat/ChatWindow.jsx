@@ -5,6 +5,7 @@ import { useSocket } from "../../context/socketContext.jsx";
 
 function ChatWindow({ receiverId }) {
 	const { socket } = useSocket(); // ✅ Correct use of hook
+	console.log("Receiver ID: ", receiverId);
 
 	const [messages, setMessages] = useState([]);
 	const [newMessage, setNewMessage] = useState("");
@@ -29,7 +30,7 @@ function ChatWindow({ receiverId }) {
 					return response.json().then((err) => {
 						throw new Error(
 							err.message ||
-								`HTTP error! status: ${response.status}`,
+							`HTTP error! status: ${response.status}`,
 						);
 					});
 				}
@@ -43,12 +44,16 @@ function ChatWindow({ receiverId }) {
 			.finally(() => setLoading(false));
 	}, [receiverId]);
 
-	// Listen for new messages from socket
+
 	useEffect(() => {
 		if (!socket) return;
 
 		const handleNewMessage = (message) => {
-			setMessages((prev) => [...prev, message]);
+			// console.log("New message received:", message);
+			console.log("sender and chat opened id and message	: ", message.senderId, receiverId, message);
+			if (receiverId === message.senderId) {
+				setMessages((prev) => [...prev, message]);
+			}
 		};
 
 		socket.on("new_message", handleNewMessage);
@@ -57,7 +62,7 @@ function ChatWindow({ receiverId }) {
 		return () => {
 			socket.off("new_message", handleNewMessage);
 		};
-	}, [socket]);
+	}, [socket, receiverId]);
 
 	const sendMessage = () => {
 		const token = localStorage.getItem("token");
@@ -76,7 +81,7 @@ function ChatWindow({ receiverId }) {
 					return response.json().then((err) => {
 						throw new Error(
 							err.message ||
-								`HTTP error! status: ${response.status}`,
+							`HTTP error! status: ${response.status}`,
 						);
 					});
 				}
@@ -133,6 +138,11 @@ function ChatWindow({ receiverId }) {
 			<div style={{ display: "flex", marginTop: "10px" }}>
 				<input
 					type="text"
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							sendMessage();
+						}
+					}}
 					value={newMessage}
 					onChange={(e) => setNewMessage(e.target.value)}
 					style={{
@@ -145,6 +155,7 @@ function ChatWindow({ receiverId }) {
 				/>
 				<button
 					onClick={sendMessage}
+
 					style={{
 						padding: "8px 12px",
 						backgroundColor: "#007bff",

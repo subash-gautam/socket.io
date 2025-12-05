@@ -23,6 +23,9 @@ export const createMessage = async (req, res) => {
 		)?.socketId;
 
 		io.to(socketId).emit("new_message", message);
+
+
+		// console.log("New message sent to socketId: ", socketId);
 		res.json(message);
 	} catch (error) {
 		console.log(error);
@@ -46,37 +49,21 @@ export const getMessage = async (req, res) => {
 };
 
 export const chatIdList = async (req, res) => {
+	console.log("req.user ", req.user)
 	const { id } = req.user;
 	try {
-		// const messages = await prisma.message.findMany({
-		// 	where: {
-		// 		OR: [{ receiverId: id }, { senderId: id }],
-		// 	},
-		// 	select: {
-		// 		receiverId: true,
-		// 		senderId: true,
-		// 	},
-		// });
-		// const userIds = new Set();
-		// messages.forEach((message) => {
-		// 	userIds.add(message.receiverId);
-		// 	userIds.add(message.senderId);
-		// });
-		// const uniqueUserIds = Array.from(userIds);
-		// // Correct way to filter out the current user's ID
-		// const relationIds = uniqueUserIds.filter((userId) => userId !== id);
-		// res.json({ userIds: relationIds });
-		const ids = await prisma.user.findMany({
-			where: {
-				id: {
-					not: Number(id),
-				},
-			},
-			select: {
-				id: true,
-			},
+		const onlineUsers = getOnlineUsers()
+
+		const relationIds = onlineUsers
+
+			.filter((u) => u.userId !== id)
+
+			.map((u) => u.userId);
+
+		res.json({
+			userIds: relationIds
 		});
-		res.json({ userIds: ids.map((u) => u.id) });
+
 	} catch (error) {
 		console.error(error); // Use console.error for errors
 		res.status(500).json({ message: error.message });
@@ -86,11 +73,6 @@ export const chatIdList = async (req, res) => {
 export const getChat = async (req, res) => {
 	const senderId = req.user.id;
 	const { receiverId } = req.query;
-
-	console.log("senderId:", typeof senderId, senderId);
-	console.log("receiverId:", typeof receiverId, receiverId);
-	console.log("req.query:", req.query);
-	console.log("req.user:", req.user);
 
 	const parsedSenderId = parseInt(senderId);
 	const parsedReceiverId = parseInt(receiverId);

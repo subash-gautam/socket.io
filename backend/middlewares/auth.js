@@ -38,7 +38,7 @@ export const authenticateToken = async (req, res, next) => {
 export const authenticateSocket = async (socket, next) => {
 	try {
 		const token = socket.handshake.query.token; // Extract token from handshake query
-		console.log("Token in socket auth: ", token);
+		// console.log("Token in socket auth: ", token);
 		if (!token) {
 			throw new Error("No token provided");
 		}
