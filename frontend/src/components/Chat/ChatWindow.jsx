@@ -30,7 +30,7 @@ function ChatWindow({ receiverId }) {
 					return response.json().then((err) => {
 						throw new Error(
 							err.message ||
-							`HTTP error! status: ${response.status}`,
+								`HTTP error! status: ${response.status}`,
 						);
 					});
 				}
@@ -44,13 +44,17 @@ function ChatWindow({ receiverId }) {
 			.finally(() => setLoading(false));
 	}, [receiverId]);
 
-
 	useEffect(() => {
 		if (!socket) return;
 
 		const handleNewMessage = (message) => {
 			// console.log("New message received:", message);
-			console.log("sender and chat opened id and message	: ", message.senderId, receiverId, message);
+			console.log(
+				"sender and chat opened id and message	: ",
+				message.senderId,
+				receiverId,
+				message,
+			);
 			if (receiverId === message.senderId) {
 				setMessages((prev) => [...prev, message]);
 			}
@@ -81,7 +85,7 @@ function ChatWindow({ receiverId }) {
 					return response.json().then((err) => {
 						throw new Error(
 							err.message ||
-							`HTTP error! status: ${response.status}`,
+								`HTTP error! status: ${response.status}`,
 						);
 					});
 				}
@@ -155,7 +159,6 @@ function ChatWindow({ receiverId }) {
 				/>
 				<button
 					onClick={sendMessage}
-
 					style={{
 						padding: "8px 12px",
 						backgroundColor: "#007bff",
