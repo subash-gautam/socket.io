@@ -1,2 +1,5 @@
 node_modules/
 backend.js
+.env
+.DS_Store
+.vscode/  

@@ -1,3 +1,3 @@
-const backend = "https://socket-io-1k1n.onrender.com";
+const backend = import.meta.env.VITE_BACKEND_URL || "http://localhost:3500";
 
 export default backend;
